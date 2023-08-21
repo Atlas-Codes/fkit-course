@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { user } from "$lib/firebase";
+    import { auth } from '$lib/firebase';
+    import { userStore } from 'sveltefire';
+    const user = userStore(auth);
   </script>
   
   {#if $user}

@@ -1,10 +1,9 @@
 <script lang="ts">
-   import { user, userData } from "$lib/firebase";
+    import { auth, userData, user } from '$lib/firebase';
     import "../app.css";
 
-
-   $user;
-   $userData; 
+    $user;
+    $userData;
 </script>
 
 <div class="min-h-screen flex flex-col">

@@ -5,7 +5,13 @@ import { getStorage } from "firebase/storage";
 import { writable, type Readable, derived } from "svelte/store";
 
 const firebaseConfig = {
-
+  apiKey: "AIzaSyC5GnIwr017c_aVCU364kQ5iIfKF9EWq40",
+  authDomain: "churn-ff73e.firebaseapp.com",
+  projectId: "churn-ff73e",
+  storageBucket: "churn-ff73e.appspot.com",
+  messagingSenderId: "983431901870",
+  appId: "1:983431901870:web:64aca3c3b137a0fe6d733f",
+  measurementId: "G-NNZWS7JJ2F"
 };
 
 // Initialize Firebase
@@ -13,7 +19,6 @@ export const app = initializeApp(firebaseConfig);
 export const db = getFirestore();
 export const auth = getAuth();
 export const storage = getStorage();
-
 
 /**
  * @returns a store with the current firebase user
@@ -44,8 +49,6 @@ function userStore() {
 
 export const user = userStore();
 
-
-
 /**
  * @param  {string} path document path or reference
  * @param  {any} startWith optional default data
@@ -73,18 +76,23 @@ export function docStore<T>(
   };
 }
 
-interface UserData {
-  username: string;
-  bio: string;
-  photoURL: string;
-  published: boolean;
-  links: any[];
+interface CardData {
+  bankName: string;
+  dateLastCancelled: string; // consider using firebase.firestore.Timestamp in the future
+  dateEligible: string;
+  spendRequirement: string;
+  timeframeForSpend: string;
+  notes: string;
 }
 
-export const userData: Readable<UserData | null> = derived(user, ($user, set) => { 
+export const userData: Readable<CardData | null> = derived(user, ($user, set) => { 
   if ($user) {
-    return docStore<UserData>(`users/${$user.uid}`).subscribe(set);
+    return docStore<CardData>(`users/${$user.uid}`).subscribe(set);
   } else {
     set(null); 
   }
 });  
+
+export function userCardDataStore(userID: string) {
+  return docStore<CardData>(`data/${userID}`);
+}
