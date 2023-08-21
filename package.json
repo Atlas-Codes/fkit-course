@@ -10,8 +10,11 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
+		"@skeletonlabs/skeleton": "^2.0.0-rc.1",
+		"@skeletonlabs/tw-plugin": "^0.1.0-rc.6",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.20.4",
+		"@types/node": "^20.5.1",
 		"autoprefixer": "^10.4.14",
 		"daisyui": "^3.1.6",
 		"postcss": "^8.4.24",

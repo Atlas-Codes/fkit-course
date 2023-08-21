@@ -1,11 +1,56 @@
 <script lang="ts">
     import { auth, user, userCardDataStore } from "$lib/firebase";
+    import { Table, tableMapperValues } from '@skeletonlabs/skeleton';
+    import type { TableSource } from '@skeletonlabs/skeleton';
+    import { onDestroy } from "svelte";
+    import { getModalStore } from '@skeletonlabs/skeleton';
+    import type { ModalSettings } from "@skeletonlabs/skeleton";
+    import ModalForm from "$lib/components/ModalForm.svelte";
+    
+    let cardData: Array<{ [key: string]: any }> = [];
+    let previousUid: string | null = null;
+    let unsubscribe: () => void;
 
-    let cardData;
+    let modalStore = getModalStore();
+                                        
+    $: {
+        if ($user && $user.uid !== previousUid) {
+            const cardDataStore = userCardDataStore($user.uid);
+            unsubscribe = cardDataStore.subscribe(value => {
+                cardData = value;
+            });
+            previousUid = $user.uid;
+        }
+    }
 
-    if ($user) {
-        const cardDataStore = userCardDataStore($user.uid);
-        cardDataStore.subscribe(value => cardData = value);
+    onDestroy(() => {
+        if (unsubscribe) {
+            unsubscribe();
+        }
+    });
+    
+    const tableSimple: TableSource = {
+        // A list of heading labels.
+        head: ['Bank Name', 'Date Last Cancelled', 'Date Eligible', 'Spend Requirement', 'Timeframe for Spend', 'Notes', 'Actions'],
+        // The data visibly shown in your table body UI.
+        body: tableMapperValues(cardData, ['Bank Name', 'Date Last Cancelled', 'Date Eligible', 'Spend Requirement', 'Timeframe for Spend', 'Notes', 'Actions']),
+    };
+
+    $: {
+        if (cardData) {
+            tableSimple.body = tableMapperValues([cardData], ['bankName', 'dateLastCancelled', 'dateEligible', 'spendRequirement', 'timeframeForSpend', 'notes']);
+        }
+    }
+    
+    function editCard() {
+        const modal: ModalSettings = {
+            type: 'component',
+            // Pass the component registry key as a string:
+            component: 'ModalForm',
+            title: 'Edit',
+            body: '',
+        };
+        modalStore.trigger(modal);
     }
 </script>
   
@@ -13,62 +58,6 @@ Hello {$user?.displayName}
 
 <h2 class="text-2xl mb-4">Manage Your Cards</h2>
 
-<table class="mt-4 w-full">
-    <thead>
-        <tr>
-            <th>Bank Name</th>
-            <th>Date Last Cancelled</th>
-            <th>Date Eligible</th>
-            <th>Spend Requirement</th>
-            <th>Timeframe for Spend</th>
-            <th>Notes</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{cardData?.bankName}</td>
-            <td>{cardData?.dateLastCancelled}</td>
-            <td>{cardData?.dateEligible}</td>
-            <td>{cardData?.spendRequirement}</td>
-            <td>{cardData?.timeframeForSpend}</td>
-            <td>{cardData?.notes}</td>
-            <td>
-                <!-- <button on:click={() => updateCard(card.id)}>Edit</button>
-                <button on:click={() => deleteCard(card.id)}>Delete</button> -->
-            </td>
-        </tr>
-    </tbody>
-</table>
+<button class="btn variant-filled" on:click={editCard}>Edit Card</button>
 
-
-
-<!-- <table class="mt-4 w-full">
-    <thead>
-        <tr>
-            <th>Bank Name</th>
-            <th>Date Last Cancelled</th>
-            <th>Date Eligible</th>
-            <th>Spend Requirement</th>
-            <th>Timeframe for Spend</th>
-            <th>Notes</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each cards as card}
-            <tr>
-                <td>{card.bankName}</td>
-                <td>{card.dateLastCancelled}</td>
-                <td>{card.dateEligible}</td>
-                <td>{card.spendRequirement}</td>
-                <td>{card.timeframeForSpend}</td>
-                <td>{card.notes}</td>
-                <td>
-                    <button on:click={() => updateCard(card.id)}>Edit</button>
-                    <button on:click={() => deleteCard(card.id)}>Delete</button>
-                </td>
-            </tr>
-        {/each}
-    </tbody>
-</table> -->
+<Table source={tableSimple} />

@@ -26,15 +26,9 @@
         <div class="w-full">
           <h1 class="text-7xl font-bold">Churn</h1>
           <p class="py-6 text-2xl">Manage your rewards credit cards in one location</p>
-          <!-- {#if $userData?.username}
-            <a href="/{$userData.username}/edit" class="btn btn-primary">Get Started</a>
-          {:else}
-            <a href="/login" class="btn btn-primary">Login / Sign Up</a>
-          {/if} -->
-
           {#if $user}
             <h2 class="pb-6 text-2xl">Welcome, {$user.displayName}</h2>
-            <a href="/main" class="btn btn-outline btn-accent">Get Started</a>
+            <a href="/main" class="btn variant-filled">Get Started</a>
             <br><br>
             <button class="btn btn-outline btn-warning" on:click={() => signOut(auth)}>Sign out</button>
           {:else}
@@ -47,5 +41,3 @@
     </div>
     
   </main>
-  
-  
