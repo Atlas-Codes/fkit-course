@@ -1,11 +1,9 @@
 <script lang="ts">
     import { auth, user, userCardDataStore } from "$lib/firebase";
-    import { Table, tableMapperValues } from '@skeletonlabs/skeleton';
+    import { Table, tableMapperValues, getModalStore } from '@skeletonlabs/skeleton';
     import type { TableSource } from '@skeletonlabs/skeleton';
     import { onDestroy } from "svelte";
-    import { getModalStore } from '@skeletonlabs/skeleton';
     import type { ModalSettings } from "@skeletonlabs/skeleton";
-    import ModalForm from "$lib/components/ModalForm.svelte";
     
     let cardData: Array<{ [key: string]: any }> = [];
     let previousUid: string | null = null;
